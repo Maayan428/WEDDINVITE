@@ -24,8 +24,43 @@
   --color-gold-600: #9a7b22;
 }
 
+/* ── CSS custom properties ── */
+:root {
+  --color-bg-primary: #ffffff;
+  --color-bg-secondary: #f0fafa;
+  --color-accent-teal: #0d9488;
+  --color-accent-cyan: #06b6d4;
+  --color-accent-light: #ccfbf1;
+  --color-navy-heading: #1e3a5f;
+  --color-body-text: #374151;
+  --color-subtle-text: #6b7280;
+  --color-border: #e5e7eb;
+  --shadow-card: 0 1px 3px rgba(0,0,0,0.08), 0 4px 16px rgba(13,148,136,0.06);
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+/* ── Scrollbar styling ── */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: #f0fafa;
+}
+::-webkit-scrollbar-thumb {
+  background: #0d9488;
+  border-radius: 9999px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #0f766e;
+}
+
 body {
   font-family: var(--font-heebo), 'Arial Hebrew', Arial, sans-serif;
-  background-color: #fafafa;
-  color: #171717;
+  background: linear-gradient(135deg, #f0fafa 0%, #ffffff 60%);
+  color: #374151;
+  min-height: 100vh;
 }

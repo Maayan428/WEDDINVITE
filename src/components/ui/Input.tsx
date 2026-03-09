@@ -28,10 +28,10 @@ export default function Input({
       <input
         id={inputId}
         className={cn(
-          'rounded-lg border px-3 py-2 text-sm text-start transition-colors outline-none',
-          'border-gray-300 bg-white placeholder:text-gray-400',
-          'focus:border-navy-800 focus:ring-1 focus:ring-navy-800',
-          error && 'border-red-500 focus:border-red-500 focus:ring-red-500',
+          'rounded-xl border px-3 py-2 text-sm text-start transition-all duration-200 outline-none',
+          'border-gray-200 bg-white placeholder:text-gray-400',
+          'focus:border-teal-400 focus:ring-2 focus:ring-teal-100',
+          error && 'border-red-400 focus:border-red-400 focus:ring-red-100',
           className,
         )}
         {...props}

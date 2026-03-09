@@ -11,13 +11,13 @@ import Button from '@/components/ui/Button';
 
 function StatsSkeleton() {
   return (
-    <div className="rounded-xl border border-gray-200 bg-white p-6 shadow-sm animate-pulse">
+    <div className="rounded-2xl border border-gray-100 bg-white p-6 animate-pulse" style={{ boxShadow: '0 1px 3px rgba(0,0,0,0.08), 0 4px 16px rgba(13,148,136,0.06)' }}>
       <div className="flex items-center justify-between">
         <div className="space-y-3">
-          <div className="h-3 w-20 rounded bg-gray-200" />
-          <div className="h-8 w-14 rounded bg-gray-200" />
+          <div className="h-3 w-20 rounded bg-gray-100" />
+          <div className="h-8 w-14 rounded bg-gray-100" />
         </div>
-        <div className="w-12 h-12 rounded-full bg-gray-200" />
+        <div className="w-12 h-12 rounded-full bg-gray-100" />
       </div>
     </div>
   );
@@ -25,10 +25,10 @@ function StatsSkeleton() {
 
 function SummarySkeleton() {
   return (
-    <div className="rounded-xl border border-gray-200 bg-white p-6 shadow-sm animate-pulse space-y-3">
-      <div className="h-3 w-32 rounded bg-gray-200" />
-      <div className="h-10 w-20 rounded bg-gray-200" />
-      <div className="h-2 w-40 rounded bg-gray-200" />
+    <div className="rounded-2xl border border-gray-100 bg-white p-6 animate-pulse space-y-3" style={{ boxShadow: '0 1px 3px rgba(0,0,0,0.08), 0 4px 16px rgba(13,148,136,0.06)' }}>
+      <div className="h-3 w-32 rounded bg-gray-100" />
+      <div className="h-10 w-20 rounded bg-gray-100" />
+      <div className="h-2 w-40 rounded bg-gray-100" />
     </div>
   );
 }
@@ -39,24 +39,25 @@ function GroupCard({ group, onClick }: { group: GroupBreakdown; onClick: () => v
     <button
       type="button"
       onClick={onClick}
-      className="w-full rounded-xl border border-gray-200 bg-white p-4 shadow-sm text-start hover:border-navy-300 hover:shadow-md transition-all"
+      className="w-full rounded-2xl border border-gray-100 bg-white p-4 text-start hover:border-teal-200 hover:shadow-md transition-all duration-300"
+      style={{ boxShadow: '0 1px 3px rgba(0,0,0,0.08), 0 4px 16px rgba(13,148,136,0.06)' }}
     >
       <div className="flex items-center justify-between mb-3">
-        <span className="text-sm font-semibold text-gray-800 truncate">{group.name}</span>
+        <span className="text-sm font-semibold truncate" style={{ color: '#1e3a5f' }}>{group.name}</span>
         <span className="text-xs text-gray-400 shrink-0 ms-2">
           {group.confirmed}/{group.total}
         </span>
       </div>
-      <div className="h-1.5 w-full rounded-full bg-gray-100 overflow-hidden">
+      <div className="h-1.5 w-full rounded-full bg-teal-50 overflow-hidden">
         <div
-          className="h-full rounded-full bg-green-500 transition-all duration-500"
+          className="h-full rounded-full bg-teal-500 transition-all duration-500"
           style={{ width: `${pct}%` }}
         />
       </div>
       <div className="mt-2 flex items-center justify-between text-xs text-gray-500">
         <span>{pct}% אישרו</span>
         {group.pending > 0 && (
-          <span className="text-yellow-600">{group.pending} ממתינים</span>
+          <span className="text-amber-600">{group.pending} ממתינים</span>
         )}
       </div>
     </button>
@@ -89,8 +90,11 @@ export default function DashboardPage() {
       {/* Page title */}
       <div className="flex items-center justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900">לוח בקרה</h1>
-          <p className="mt-1 text-sm text-gray-600">סיכום סטטוס ההזמנות</p>
+          <h1 className="font-serif text-3xl font-bold" style={{ color: '#1e3a5f' }}>לוח בקרה</h1>
+          <div className="mt-1 flex items-center gap-2">
+            <div className="h-0.5 w-8 rounded-full bg-teal-500" />
+            <p className="text-sm text-gray-500">סיכום סטטוס ההזמנות</p>
+          </div>
         </div>
         <div className="flex items-center gap-2">
           <button
@@ -98,9 +102,9 @@ export default function DashboardPage() {
             onClick={refresh}
             disabled={loading}
             title="רענן נתונים"
-            className="flex items-center gap-1.5 rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm text-gray-600 hover:bg-gray-50 transition-colors disabled:opacity-50"
+            className="flex items-center gap-1.5 rounded-xl border border-gray-200 bg-white px-3 py-2 text-sm text-gray-600 hover:bg-gray-50 hover:border-gray-300 transition-all duration-200 disabled:opacity-50"
           >
-            <RefreshCw className={`w-4 h-4 ${loading && !isInitialLoad ? 'animate-spin' : ''}`} />
+            <RefreshCw className={`w-4 h-4 ${loading && !isInitialLoad ? 'animate-spin text-teal-500' : ''}`} />
             רענן
           </button>
           <Button variant="secondary" onClick={() => setGroupsManagerOpen(true)}>
@@ -112,7 +116,7 @@ export default function DashboardPage() {
 
       {/* Error banner */}
       {error && !loading && (
-        <div className="rounded-lg bg-red-50 px-4 py-3 text-sm text-red-600">{error}</div>
+        <div className="rounded-xl bg-red-50 border border-red-100 px-4 py-3 text-sm text-red-600">{error}</div>
       )}
 
       {/* Stats cards */}
@@ -138,17 +142,23 @@ export default function DashboardPage() {
           </>
         ) : (
           <>
-            <div className="rounded-xl border border-gray-200 bg-white p-6 shadow-sm">
-              <p className="text-sm font-medium text-gray-600">סך מגיעים צפויים</p>
-              <p className="mt-1 text-4xl font-bold text-navy-800">{stats.totalExpectedGuests}</p>
-              <p className="mt-1 text-xs text-gray-400">מאשרים + מתוכנן לממתינים</p>
+            <div
+              className="rounded-2xl p-6 text-white"
+              style={{ background: 'linear-gradient(135deg, #0d9488 0%, #06b6d4 100%)', boxShadow: '0 4px 20px rgba(13,148,136,0.25)' }}
+            >
+              <p className="text-sm font-medium text-teal-100">סך מגיעים צפויים</p>
+              <p className="mt-1 text-4xl font-bold text-white">{stats.totalExpectedGuests}</p>
+              <p className="mt-1 text-xs text-teal-200">מאשרים + מתוכנן לממתינים</p>
             </div>
-            <div className="rounded-xl border border-gray-200 bg-white p-6 shadow-sm">
+            <div
+              className="rounded-2xl border border-gray-100 bg-white p-6"
+              style={{ boxShadow: '0 1px 3px rgba(0,0,0,0.08), 0 4px 16px rgba(13,148,136,0.06)' }}
+            >
               <div className="flex items-center gap-2 mb-1">
-                <UserCheck className="w-4 h-4 text-green-600" />
+                <UserCheck className="w-4 h-4 text-emerald-500" />
                 <p className="text-sm font-medium text-gray-600">אנשים שאישרו בפועל</p>
               </div>
-              <p className="text-4xl font-bold text-green-700">{stats.confirmedPeople}</p>
+              <p className="text-4xl font-bold text-emerald-600">{stats.confirmedPeople}</p>
               <p className="mt-1 text-xs text-gray-400">לפי הצהרות האורחים</p>
             </div>
           </>
@@ -156,16 +166,19 @@ export default function DashboardPage() {
       </div>
 
       {/* Bar chart */}
-      <div className="rounded-xl border border-gray-200 bg-white shadow-sm">
-        <div className="border-b border-gray-200 px-6 py-4">
-          <h2 className="text-lg font-semibold text-gray-900">פירוט לפי קבוצה</h2>
+      <div
+        className="rounded-2xl border border-gray-100 bg-white"
+        style={{ boxShadow: '0 1px 3px rgba(0,0,0,0.08), 0 4px 16px rgba(13,148,136,0.06)' }}
+      >
+        <div className="border-b border-gray-100 px-6 py-4">
+          <h2 className="text-lg font-semibold" style={{ color: '#1e3a5f' }}>פירוט לפי קבוצה</h2>
           <p className="mt-0.5 text-xs text-gray-400">לחץ על עמודה לפירוט אורחים בקבוצה</p>
         </div>
         <div className="p-6">
           {isInitialLoad ? (
             <div className="flex items-end justify-around h-[200px] gap-3 animate-pulse">
               {Array.from({ length: 5 }).map((_, i) => (
-                <div key={i} className="flex-1 rounded-t bg-gray-200" style={{ height: `${35 + i * 20}%` }} />
+                <div key={i} className="flex-1 rounded-t bg-teal-50" style={{ height: `${35 + i * 20}%` }} />
               ))}
             </div>
           ) : (
@@ -177,7 +190,7 @@ export default function DashboardPage() {
       {/* Group cards */}
       {!isInitialLoad && groupBreakdown.length > 0 && (
         <div>
-          <h2 className="mb-4 text-base font-semibold text-gray-900">ביצועים לפי קבוצה</h2>
+          <h2 className="mb-4 text-base font-semibold" style={{ color: '#1e3a5f' }}>ביצועים לפי קבוצה</h2>
           <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
             {groupBreakdown.map((group) => (
               <GroupCard

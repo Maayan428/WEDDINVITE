@@ -9,9 +9,9 @@ interface BadgeProps {
 }
 
 const statusConfig: Record<RSVPStatus, { label: string; className: string }> = {
-  confirmed: { label: 'אישר הגעה', className: 'bg-green-100 text-green-800 border-green-200' },
-  declined:  { label: 'לא מגיע',   className: 'bg-red-100 text-red-800 border-red-200' },
-  pending:   { label: 'ממתין',     className: 'bg-yellow-100 text-yellow-800 border-yellow-200' },
+  confirmed: { label: 'אישר הגעה', className: 'bg-emerald-100 text-emerald-700' },
+  declined:  { label: 'לא מגיע',   className: 'bg-red-100 text-red-600' },
+  pending:   { label: 'ממתין',     className: 'bg-amber-100 text-amber-700' },
 };
 
 export default function Badge({ status, className }: BadgeProps) {
@@ -19,7 +19,7 @@ export default function Badge({ status, className }: BadgeProps) {
   return (
     <span
       className={cn(
-        'inline-flex items-center rounded-full border px-2.5 py-0.5 text-xs font-medium',
+        'inline-flex items-center rounded-full px-3 py-1 text-xs font-medium',
         config.className,
         className,
       )}

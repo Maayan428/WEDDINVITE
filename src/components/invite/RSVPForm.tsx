@@ -72,11 +72,16 @@ export default function RSVPForm({ guest, onSubmit, loading, initialAttending }:
           <button
             type="button"
             onClick={() => setAttending(true)}
-            className={`rounded-xl border-2 py-5 px-3 text-center font-medium transition-all ${
+            className={`rounded-xl border-2 py-5 px-3 text-center font-medium transition-all duration-200 ${
               attending === true
-                ? 'border-green-500 bg-green-50 text-green-700 shadow-sm'
-                : 'border-gray-200 text-gray-600 hover:border-gray-300'
+                ? 'border-teal-500 text-white shadow-md'
+                : 'border-gray-200 text-gray-600 hover:border-teal-300 hover:bg-teal-50/50'
             }`}
+            style={
+              attending === true
+                ? { background: 'linear-gradient(135deg, #0d9488 0%, #06b6d4 100%)' }
+                : {}
+            }
           >
             <span className="block text-2xl mb-1.5">✓</span>
             <span className="text-sm">אשמח להגיע</span>
@@ -84,10 +89,10 @@ export default function RSVPForm({ guest, onSubmit, loading, initialAttending }:
           <button
             type="button"
             onClick={() => setAttending(false)}
-            className={`rounded-xl border-2 py-5 px-3 text-center font-medium transition-all ${
+            className={`rounded-xl border-2 py-5 px-3 text-center font-medium transition-all duration-200 ${
               attending === false
                 ? 'border-red-400 bg-red-50 text-red-600 shadow-sm'
-                : 'border-gray-200 text-gray-600 hover:border-gray-300'
+                : 'border-gray-200 text-gray-600 hover:border-red-200 hover:bg-red-50/30'
             }`}
           >
             <span className="block text-2xl mb-1.5">✗</span>
@@ -106,15 +111,15 @@ export default function RSVPForm({ guest, onSubmit, loading, initialAttending }:
               <button
                 type="button"
                 onClick={() => setActualGuests((n) => Math.max(1, n - 1))}
-                className="w-10 h-10 rounded-full border border-gray-300 text-xl leading-none hover:bg-gray-100 transition-colors"
+                className="w-10 h-10 rounded-full border border-gray-200 text-xl leading-none hover:bg-teal-50 hover:border-teal-300 hover:text-teal-600 transition-all duration-200"
               >
                 −
               </button>
-              <span className="text-2xl font-semibold w-8 text-center">{actualGuests}</span>
+              <span className="text-2xl font-semibold w-8 text-center" style={{ color: '#1e3a5f' }}>{actualGuests}</span>
               <button
                 type="button"
                 onClick={() => setActualGuests((n) => Math.min(guest.plannedGuests, n + 1))}
-                className="w-10 h-10 rounded-full border border-gray-300 text-xl leading-none hover:bg-gray-100 transition-colors"
+                className="w-10 h-10 rounded-full border border-gray-200 text-xl leading-none hover:bg-teal-50 hover:border-teal-300 hover:text-teal-600 transition-all duration-200"
               >
                 +
               </button>
@@ -135,7 +140,7 @@ export default function RSVPForm({ guest, onSubmit, loading, initialAttending }:
                     type="checkbox"
                     checked={option === OTHER ? otherChecked : dietaryNeeds.includes(option)}
                     onChange={() => toggleDietary(option)}
-                    className="rounded border-gray-300 accent-navy-800"
+                    className="rounded border-gray-300 accent-teal-600"
                   />
                   <span className="text-sm text-gray-700">{option}</span>
                 </label>
@@ -147,7 +152,7 @@ export default function RSVPForm({ guest, onSubmit, loading, initialAttending }:
                 value={dietaryNote}
                 onChange={(e) => setDietaryNote(e.target.value)}
                 placeholder="פרט/י בבקשה..."
-                className="rounded-lg border border-gray-300 px-3 py-2 text-sm outline-none focus:border-navy-800 focus:ring-1 focus:ring-navy-800"
+                className="rounded-xl border border-gray-200 px-3 py-2 text-sm outline-none focus:border-teal-400 focus:ring-2 focus:ring-teal-100 transition-all duration-200"
               />
             )}
           </div>
@@ -165,7 +170,7 @@ export default function RSVPForm({ guest, onSubmit, loading, initialAttending }:
           onChange={(e) => setPersonalMessage(e.target.value.slice(0, MAX_MESSAGE))}
           placeholder="כתבו לנו ברכה חמה..."
           rows={3}
-          className="rounded-lg border border-gray-300 px-3 py-2 text-sm outline-none focus:border-navy-800 focus:ring-1 focus:ring-navy-800 resize-none"
+          className="rounded-xl border border-gray-200 px-3 py-2 text-sm outline-none focus:border-teal-400 focus:ring-2 focus:ring-teal-100 transition-all duration-200 resize-none"
         />
         <p className="text-xs text-gray-400 text-end">
           {personalMessage.length}/{MAX_MESSAGE}

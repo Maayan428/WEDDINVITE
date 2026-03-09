@@ -26,17 +26,24 @@ export default function LoginPage() {
   }
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-gradient-to-br from-navy-900 via-navy-800 to-navy-700 p-4">
-      <div className="w-full max-w-sm">
+    <div
+      className="flex min-h-screen items-center justify-center p-4"
+      style={{ background: 'linear-gradient(135deg, #f0fafa 0%, #ccfbf1 40%, #ffffff 100%)' }}
+    >
+      <div className="w-full max-w-md">
         {/* Logo / Title */}
         <div className="mb-8 text-center">
-          <h1 className="font-serif text-4xl font-bold text-white">ניהול אורחים</h1>
-          <p className="mt-2 text-navy-200">מערכת לניהול הזמנות לחתונה</p>
+          <div className="text-5xl mb-4">💍</div>
+          <h1 className="font-serif text-4xl font-bold" style={{ color: '#1e3a5f' }}>ניהול אורחים</h1>
+          <p className="mt-2 text-gray-500">מערכת לניהול הזמנות לחתונה</p>
         </div>
 
         {/* Card */}
-        <div className="rounded-2xl bg-white p-8 shadow-2xl">
-          <h2 className="mb-6 text-xl font-semibold text-gray-900">כניסה למערכת</h2>
+        <div
+          className="rounded-2xl bg-white p-8"
+          style={{ boxShadow: '0 8px 40px rgba(13,148,136,0.12), 0 2px 8px rgba(0,0,0,0.06)' }}
+        >
+          <h2 className="mb-6 text-xl font-semibold" style={{ color: '#1e3a5f' }}>כניסה למערכת</h2>
 
           <form onSubmit={handleSubmit} className="flex flex-col gap-4">
             <Input
@@ -59,10 +66,10 @@ export default function LoginPage() {
             />
 
             {error && (
-              <p className="rounded-lg bg-red-50 px-4 py-2.5 text-sm text-red-600">{error}</p>
+              <p className="rounded-xl bg-red-50 border border-red-100 px-4 py-2.5 text-sm text-red-600">{error}</p>
             )}
 
-            <Button type="submit" loading={loading} className="mt-2 w-full">
+            <Button type="submit" loading={loading} className="mt-2 w-full" size="lg">
               כניסה
             </Button>
           </form>

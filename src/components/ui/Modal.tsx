@@ -26,19 +26,26 @@ export default function Modal({ isOpen, onClose, title, children }: ModalProps) 
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
       {/* Backdrop */}
       <div
-        className="absolute inset-0 bg-black/50 backdrop-blur-sm"
+        className="absolute inset-0 bg-black/40 backdrop-blur-sm"
         onClick={onClose}
         aria-hidden="true"
       />
       {/* Panel */}
-      <div className="relative z-10 w-full max-w-lg rounded-xl bg-white shadow-2xl">
+      <div
+        className="relative z-10 w-full max-w-lg rounded-2xl bg-white"
+        style={{ boxShadow: '0 8px 40px rgba(0,0,0,0.15), 0 2px 8px rgba(13,148,136,0.08)' }}
+      >
         {/* Header */}
-        <div className="flex items-center justify-between border-b border-gray-200 px-6 py-4">
-          {title && <h2 className="text-lg font-semibold text-gray-900">{title}</h2>}
+        <div className="flex items-center justify-between border-b border-gray-100 px-6 py-4">
+          {title && (
+            <h2 className="text-lg font-semibold" style={{ color: '#1e3a5f' }}>
+              {title}
+            </h2>
+          )}
           <button
             type="button"
             onClick={onClose}
-            className="ms-auto rounded-lg p-1.5 text-gray-500 hover:bg-gray-100 transition-colors"
+            className="ms-auto rounded-xl p-1.5 text-gray-400 hover:bg-gray-100 hover:text-gray-600 transition-all duration-200"
             aria-label="סגור"
           >
             <X className="w-5 h-5" />

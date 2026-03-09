@@ -71,10 +71,13 @@ export default function GuestsPage() {
       {/* ── Top bar ── */}
       <div className="flex items-center justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900">ניהול אורחים</h1>
-          <p className="mt-0.5 text-sm text-gray-500">{guests.length} אורחים סה&quot;כ</p>
+          <h1 className="font-serif text-3xl font-bold" style={{ color: '#1e3a5f' }}>ניהול אורחים</h1>
+          <div className="mt-1 flex items-center gap-2">
+            <div className="h-0.5 w-8 rounded-full bg-teal-500" />
+            <p className="text-sm text-gray-500">{guests.length} אורחים סה&quot;כ</p>
+          </div>
         </div>
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-2 flex-wrap justify-end">
           <ExportExcelButton guests={guests} />
           <ImportExcelButton addGuest={addGuest} onSuccess={refresh} />
           <Button onClick={handleAdd}>
@@ -86,7 +89,7 @@ export default function GuestsPage() {
 
       {/* Error banner */}
       {error && (
-        <div className="rounded-lg bg-red-50 px-4 py-3 text-sm text-red-600">{error}</div>
+        <div className="rounded-xl bg-red-50 border border-red-100 px-4 py-3 text-sm text-red-600">{error}</div>
       )}
 
       {/* ── Search & Filters ── */}
@@ -99,7 +102,7 @@ export default function GuestsPage() {
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
             placeholder="חיפוש לפי שם..."
-            className="w-full rounded-lg border border-gray-300 py-2 pe-9 ps-3 text-sm outline-none focus:border-navy-800 focus:ring-1 focus:ring-navy-800"
+            className="w-full rounded-xl border border-gray-200 py-2 pe-9 ps-3 text-sm outline-none focus:border-teal-400 focus:ring-2 focus:ring-teal-100 bg-white transition-all duration-200"
           />
         </div>
 
@@ -108,7 +111,7 @@ export default function GuestsPage() {
           <select
             value={selectedGroup}
             onChange={(e) => setSelectedGroup(e.target.value)}
-            className="rounded-lg border border-gray-300 bg-white px-3 py-1.5 text-sm outline-none focus:border-navy-800 focus:ring-1 focus:ring-navy-800"
+            className="rounded-xl border border-gray-200 bg-white px-3 py-1.5 text-sm outline-none focus:border-teal-400 focus:ring-2 focus:ring-teal-100 transition-all duration-200"
           >
             <option value="">כל הקבוצות</option>
             {groups.map((g) => (
@@ -124,10 +127,10 @@ export default function GuestsPage() {
                 type="button"
                 onClick={() => setSelectedStatus(value)}
                 className={cn(
-                  'rounded-full border px-3 py-1 text-xs font-medium transition-colors',
+                  'rounded-full border px-3 py-1 text-xs font-medium transition-all duration-200',
                   selectedStatus === value
-                    ? 'bg-navy-800 text-white border-navy-800'
-                    : 'bg-white text-gray-600 border-gray-300 hover:border-navy-700 hover:text-navy-700',
+                    ? 'bg-teal-600 text-white border-teal-600 shadow-sm'
+                    : 'bg-white text-gray-600 border-gray-200 hover:border-teal-400 hover:text-teal-600',
                 )}
               >
                 {label}
@@ -140,7 +143,7 @@ export default function GuestsPage() {
       {/* ── Table / Cards ── */}
       {loading ? (
         <div className="flex items-center justify-center py-20">
-          <div className="w-6 h-6 rounded-full border-2 border-navy-800 border-t-transparent animate-spin" />
+          <div className="w-6 h-6 rounded-full border-2 border-teal-500 border-t-transparent animate-spin" />
         </div>
       ) : (
         <GuestTable

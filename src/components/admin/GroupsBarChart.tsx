@@ -45,8 +45,11 @@ interface CustomTooltipProps {
 function CustomTooltip({ active, payload, label }: CustomTooltipProps) {
   if (!active || !payload?.length) return null;
   return (
-    <div className="rounded-lg border border-gray-200 bg-white p-3 shadow-lg text-sm min-w-[120px]">
-      <p className="font-semibold text-gray-900 mb-2">{label}</p>
+    <div
+      className="rounded-xl border border-gray-100 bg-white p-3 text-sm min-w-[130px]"
+      style={{ boxShadow: '0 4px 20px rgba(13,148,136,0.12)' }}
+    >
+      <p className="font-semibold mb-2" style={{ color: '#1e3a5f' }}>{label}</p>
       {payload.map((entry) => (
         <p key={entry.name} style={{ color: entry.color }} className="leading-5">
           {entry.name}: <span className="font-medium">{entry.value}</span>
@@ -77,7 +80,7 @@ export default function GroupsBarChart({ groups, onGroupClick }: GroupsBarChartP
         onClick={handleChartClick}
         style={{ cursor: 'pointer' }}
       >
-        <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f0f0f0" />
+        <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f0fdf4" />
         <XAxis
           dataKey="name"
           tick={{ fontSize: 12, fill: '#6b7280' }}
@@ -90,33 +93,33 @@ export default function GroupsBarChart({ groups, onGroupClick }: GroupsBarChartP
           axisLine={false}
           tickLine={false}
         />
-        <Tooltip content={<CustomTooltip />} cursor={{ fill: 'rgba(0,0,0,0.04)' }} />
+        <Tooltip content={<CustomTooltip />} cursor={{ fill: 'rgba(13,148,136,0.04)' }} />
         <Legend
           formatter={(value) => (
             <span style={{ fontSize: '12px', color: '#374151' }}>{value}</span>
           )}
         />
-        <Bar dataKey="confirmed" stackId="a" fill="#4ade80" name="אישרו הגעה">
+        <Bar dataKey="confirmed" stackId="a" fill="#10b981" name="אישרו הגעה">
           {groups.map((entry) => (
             <Cell
               key={`confirmed-${entry.name}`}
-              fill={entry.name === DEFAULT_GROUP ? '#9ca3af' : '#4ade80'}
+              fill={entry.name === DEFAULT_GROUP ? '#9ca3af' : '#10b981'}
             />
           ))}
         </Bar>
-        <Bar dataKey="declined" stackId="a" fill="#f87171" name="לא מגיעים">
+        <Bar dataKey="declined" stackId="a" fill="#ef4444" name="לא מגיעים">
           {groups.map((entry) => (
             <Cell
               key={`declined-${entry.name}`}
-              fill={entry.name === DEFAULT_GROUP ? '#9ca3af' : '#f87171'}
+              fill={entry.name === DEFAULT_GROUP ? '#9ca3af' : '#ef4444'}
             />
           ))}
         </Bar>
-        <Bar dataKey="pending" stackId="a" fill="#fbbf24" name="ממתינים" radius={[4, 4, 0, 0]}>
+        <Bar dataKey="pending" stackId="a" fill="#f59e0b" name="ממתינים" radius={[4, 4, 0, 0]}>
           {groups.map((entry) => (
             <Cell
               key={`pending-${entry.name}`}
-              fill={entry.name === DEFAULT_GROUP ? '#9ca3af' : '#fbbf24'}
+              fill={entry.name === DEFAULT_GROUP ? '#9ca3af' : '#f59e0b'}
             />
           ))}
         </Bar>

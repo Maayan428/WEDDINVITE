@@ -142,7 +142,7 @@ export default function GuestFormModal({ isOpen, onClose, guest, onSubmit }: Gue
             onChange={(e) =>
               setFields((p) => ({ ...p, plannedGuests: Math.max(1, Number(e.target.value)) }))
             }
-            className="w-24 rounded-lg border border-gray-300 px-3 py-2 text-sm outline-none focus:border-navy-800 focus:ring-1 focus:ring-navy-800"
+            className="w-24 rounded-xl border border-gray-200 px-3 py-2 text-sm outline-none focus:border-teal-400 focus:ring-2 focus:ring-teal-100 transition-all duration-200"
           />
           {errors.plannedGuests && (
             <p className="text-xs text-red-600">{errors.plannedGuests}</p>
@@ -154,14 +154,14 @@ export default function GuestFormModal({ isOpen, onClose, guest, onSubmit }: Gue
           <label className="text-sm font-medium text-gray-700">קבוצה</label>
           {groupsLoading ? (
             <div className="flex items-center gap-2 py-2">
-              <div className="w-4 h-4 rounded-full border-2 border-navy-800 border-t-transparent animate-spin" />
+              <div className="w-4 h-4 rounded-full border-2 border-teal-500 border-t-transparent animate-spin" />
               <span className="text-sm text-gray-400">טוען קבוצות...</span>
             </div>
           ) : (
             <select
               value={fields.group}
               onChange={(e) => setFields((p) => ({ ...p, group: e.target.value }))}
-              className="rounded-lg border border-gray-300 px-3 py-2 text-sm outline-none focus:border-navy-800 focus:ring-1 focus:ring-navy-800"
+              className="rounded-xl border border-gray-200 px-3 py-2 text-sm outline-none focus:border-teal-400 focus:ring-2 focus:ring-teal-100 transition-all duration-200"
             >
               {groupOptions.map((g) => (
                 <option key={g} value={g}>{g}</option>
@@ -172,12 +172,12 @@ export default function GuestFormModal({ isOpen, onClose, guest, onSubmit }: Gue
         </div>
 
         {/* Buttons */}
-        <div className="flex justify-end gap-3 pt-2">
-          <Button variant="secondary" type="button" onClick={onClose}>
-            ביטול
-          </Button>
-          <Button type="submit" loading={loading}>
+        <div className="flex flex-col gap-2 pt-2">
+          <Button type="submit" loading={loading} className="w-full">
             שמור
+          </Button>
+          <Button variant="ghost" type="button" onClick={onClose} className="w-full">
+            ביטול
           </Button>
         </div>
       </form>
