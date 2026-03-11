@@ -19,7 +19,7 @@ export default function Badge({ status, className }: BadgeProps) {
   return (
     <span
       className={cn(
-        'inline-flex items-center rounded-full px-3 py-1 text-xs font-medium',
+        'inline-flex items-center justify-center rounded-full px-3 py-1 text-xs font-medium min-w-[100px] text-center',
         config.className,
         className,
       )}

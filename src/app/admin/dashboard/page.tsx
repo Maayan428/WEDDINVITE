@@ -8,6 +8,7 @@ import GroupsBarChart from '@/components/admin/GroupsBarChart';
 import GroupDetailModal from '@/components/admin/GroupDetailModal';
 import GroupsManager from '@/components/admin/GroupsManager';
 import Button from '@/components/ui/Button';
+import { GROUP_COLORS, DEFAULT_GROUP, DEFAULT_GROUP_COLOR } from '@/lib/constants';
 
 function StatsSkeleton() {
   return (
@@ -33,14 +34,15 @@ function SummarySkeleton() {
   );
 }
 
-function GroupCard({ group, onClick }: { group: GroupBreakdown; onClick: () => void }) {
+function GroupCard({ group, onClick, index }: { group: GroupBreakdown; onClick: () => void; index: number }) {
   const pct = group.total > 0 ? Math.round((group.confirmed / group.total) * 100) : 0;
+  const hex = group.name === DEFAULT_GROUP ? DEFAULT_GROUP_COLOR : GROUP_COLORS[index % GROUP_COLORS.length];
   return (
     <button
       type="button"
       onClick={onClick}
-      className="w-full rounded-2xl border border-gray-100 bg-white p-4 text-start hover:border-teal-200 hover:shadow-md transition-all duration-300"
-      style={{ boxShadow: '0 1px 3px rgba(0,0,0,0.08), 0 4px 16px rgba(13,148,136,0.06)' }}
+      className="w-full rounded-2xl border p-4 text-start shadow-sm hover:shadow-md hover:scale-[1.02] transition-all duration-200"
+      style={{ backgroundColor: `${hex}12`, borderColor: `${hex}50` }}
     >
       <div className="flex items-center justify-between mb-3">
         <span className="text-sm font-semibold truncate" style={{ color: '#1e3a5f' }}>{group.name}</span>
@@ -48,10 +50,10 @@ function GroupCard({ group, onClick }: { group: GroupBreakdown; onClick: () => v
           {group.confirmed}/{group.total}
         </span>
       </div>
-      <div className="h-1.5 w-full rounded-full bg-teal-50 overflow-hidden">
+      <div className="h-1.5 w-full rounded-full overflow-hidden" style={{ backgroundColor: `${hex}20` }}>
         <div
-          className="h-full rounded-full bg-teal-500 transition-all duration-500"
-          style={{ width: `${pct}%` }}
+          className="h-full rounded-full transition-all duration-500"
+          style={{ width: `${pct}%`, backgroundColor: hex }}
         />
       </div>
       <div className="mt-2 flex items-center justify-between text-xs text-gray-500">
@@ -125,10 +127,10 @@ export default function DashboardPage() {
           Array.from({ length: 4 }).map((_, i) => <StatsSkeleton key={i} />)
         ) : (
           <>
-            <StatsCard title="סך אורחים"      value={stats.total}     icon={Users}       colorVariant="blue"   />
-            <StatsCard title="אישרו הגעה"      value={stats.confirmed} icon={CheckCircle} colorVariant="green"  />
-            <StatsCard title="דחו הזמנה"       value={stats.declined}  icon={XCircle}     colorVariant="red"    />
-            <StatsCard title="ממתינים לתשובה"  value={stats.pending}   icon={Clock}       colorVariant="yellow" />
+            <div className="animate-fade-slide-up delay-100"><StatsCard title="סך אורחים"      value={stats.total}     icon={Users}       colorVariant="blue"   /></div>
+            <div className="animate-fade-slide-up delay-200"><StatsCard title="אישרו הגעה"      value={stats.confirmed} icon={CheckCircle} colorVariant="green"  /></div>
+            <div className="animate-fade-slide-up delay-300"><StatsCard title="דחו הזמנה"       value={stats.declined}  icon={XCircle}     colorVariant="red"    /></div>
+            <div className="animate-fade-slide-up delay-400"><StatsCard title="ממתינים לתשובה"  value={stats.pending}   icon={Clock}       colorVariant="yellow" /></div>
           </>
         )}
       </div>
@@ -167,7 +169,7 @@ export default function DashboardPage() {
 
       {/* Bar chart */}
       <div
-        className="rounded-2xl border border-gray-100 bg-white"
+        className="rounded-2xl border border-gray-100 bg-white animate-fade-slide-up delay-200"
         style={{ boxShadow: '0 1px 3px rgba(0,0,0,0.08), 0 4px 16px rgba(13,148,136,0.06)' }}
       >
         <div className="border-b border-gray-100 px-6 py-4">
@@ -189,13 +191,14 @@ export default function DashboardPage() {
 
       {/* Group cards */}
       {!isInitialLoad && groupBreakdown.length > 0 && (
-        <div>
+        <div className="animate-fade-slide-up delay-300">
           <h2 className="mb-4 text-base font-semibold" style={{ color: '#1e3a5f' }}>ביצועים לפי קבוצה</h2>
           <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
-            {groupBreakdown.map((group) => (
+            {groupBreakdown.map((group, index) => (
               <GroupCard
                 key={group.name}
                 group={group}
+                index={index}
                 onClick={() => setSelectedGroup(group.name)}
               />
             ))}

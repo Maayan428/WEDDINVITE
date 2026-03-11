@@ -5,6 +5,7 @@ import { Link2, Check, Pencil, Trash2 } from 'lucide-react';
 import { Guest } from '@/models/guest.model';
 import Badge from '@/components/ui/Badge';
 import { formatPhone } from '@/lib/utils';
+import { DEFAULT_GROUP, GROUP_COLORS, DEFAULT_GROUP_COLOR } from '@/lib/constants';
 
 interface GuestTableProps {
   guests: Guest[];
@@ -16,6 +17,12 @@ interface GuestTableProps {
 
 export default function GuestTable({ guests, copiedGuestId, onEdit, onDelete, onCopyLink }: GuestTableProps) {
   const [confirmDeleteId, setConfirmDeleteId] = useState<string | null>(null);
+
+  // Build a stable group → hex color mapping (sorted alphabetically for consistency)
+  const uniqueGroups = [...new Set(guests.map((g) => g.group).filter((g) => g !== DEFAULT_GROUP))].sort();
+  const groupColorMap: Record<string, string> = {};
+  uniqueGroups.forEach((g, i) => { groupColorMap[g] = GROUP_COLORS[i % GROUP_COLORS.length]; });
+  // DEFAULT_GROUP gets no full-cell color — rendered as inline chip instead
 
   if (guests.length === 0) {
     return (
@@ -39,15 +46,15 @@ export default function GuestTable({ guests, copiedGuestId, onEdit, onDelete, on
       {/* ── Desktop table (hidden on mobile) ── */}
       <div className="hidden sm:block overflow-hidden rounded-xl border border-gray-200 bg-white shadow-sm">
         <table className="w-full text-sm">
-          <thead className="border-b border-gray-200 bg-gray-50">
+          <thead className="border-b border-gray-200 bg-teal-50/60">
             <tr>
-              <th className="px-4 py-3 text-start font-semibold text-gray-700">שם</th>
-              <th className="px-4 py-3 text-start font-semibold text-gray-700">קבוצה</th>
-              <th className="px-4 py-3 text-start font-semibold text-gray-700">טלפון</th>
-              <th className="px-4 py-3 text-start font-semibold text-gray-700">מוזמנים</th>
-              <th className="px-4 py-3 text-start font-semibold text-gray-700">סטטוס</th>
-              <th className="px-4 py-3 text-start font-semibold text-gray-700">קישור</th>
-              <th className="px-4 py-3 text-start font-semibold text-gray-700">פעולות</th>
+              <th className="px-4 py-3 text-start font-semibold text-[#1e3a5f]">שם</th>
+              <th className="w-[140px] min-w-[140px] px-4 py-3 text-center font-semibold text-[#1e3a5f]">קבוצה</th>
+              <th className="px-4 py-3 text-start font-semibold text-[#1e3a5f]">טלפון</th>
+              <th className="px-4 py-3 text-start font-semibold text-[#1e3a5f]">מוזמנים</th>
+              <th className="px-4 py-3 text-start font-semibold text-[#1e3a5f]">סטטוס</th>
+              <th className="px-4 py-3 text-start font-semibold text-[#1e3a5f]">קישור</th>
+              <th className="px-4 py-3 text-start font-semibold text-[#1e3a5f]">פעולות</th>
             </tr>
           </thead>
           <tbody className="divide-y divide-gray-100">
@@ -56,11 +63,27 @@ export default function GuestTable({ guests, copiedGuestId, onEdit, onDelete, on
               const isConfirming = confirmDeleteId === guest.id;
 
               return (
-                <tr key={guest.id} className="hover:bg-gray-50 transition-colors">
+                <tr key={guest.id} className="hover:bg-teal-50/20 transition-colors duration-150">
                   <td className="px-4 py-3 font-medium text-gray-900">
                     {guest.firstName} {guest.lastName}
                   </td>
-                  <td className="px-4 py-3 text-gray-600">{guest.group}</td>
+                  {guest.group === DEFAULT_GROUP ? (
+                    <td className="w-[140px] min-w-[140px] px-3 py-3 text-center">
+                      <span className="bg-gray-100 text-gray-400 italic text-xs px-2 py-1 rounded-full">
+                        {guest.group}
+                      </span>
+                    </td>
+                  ) : (
+                    <td
+                      className="w-[140px] min-w-[140px] px-3 py-3 text-center text-sm font-medium"
+                      style={{
+                        backgroundColor: `${groupColorMap[guest.group] ?? DEFAULT_GROUP_COLOR}1a`,
+                        color: groupColorMap[guest.group] ?? DEFAULT_GROUP_COLOR,
+                      }}
+                    >
+                      {guest.group}
+                    </td>
+                  )}
                   <td className="px-4 py-3 text-gray-600">{formatPhone(guest.phone)}</td>
                   <td className="px-4 py-3 text-gray-600">
                     {guest.actualGuests ?? guest.plannedGuests}

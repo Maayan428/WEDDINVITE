@@ -28,10 +28,12 @@ export default function StatsCard({
   return (
     <div
       className={cn(
-        'rounded-2xl border-e-4 bg-white p-6 transition-shadow duration-300 hover:shadow-md',
+        'rounded-2xl border-e-4 bg-gradient-to-br from-white to-gray-50/50 p-6',
+        'transition-all duration-300 hover:-translate-y-1',
+        'hover:shadow-[0_8px_30px_rgba(13,148,136,0.15)]',
         colors.border,
       )}
-      style={{ boxShadow: '0 1px 3px rgba(0,0,0,0.08), 0 4px 16px rgba(13,148,136,0.06)' }}
+      style={{ boxShadow: '0 2px 8px rgba(0,0,0,0.06), 0 8px 24px rgba(13,148,136,0.08)' }}
     >
       <div className="flex items-center justify-between">
         <div>

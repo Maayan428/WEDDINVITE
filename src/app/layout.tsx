@@ -1,10 +1,10 @@
 import type { Metadata } from 'next';
-import { Playfair_Display, Heebo } from 'next/font/google';
+import { Assistant, Heebo } from 'next/font/google';
 import './globals.css';
 
-const playfair = Playfair_Display({
-  subsets: ['latin'],
-  variable: '--font-playfair-display',
+const assistant = Assistant({
+  subsets: ['latin', 'hebrew'],
+  variable: '--font-assistant',
   weight: ['400', '500', '600', '700'],
   display: 'swap',
 });
@@ -28,7 +28,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="he" dir="rtl">
-      <body className={`${playfair.variable} ${heebo.variable} antialiased`}>
+      <body className={`${assistant.variable} ${heebo.variable} antialiased`}>
         {children}
       </body>
     </html>

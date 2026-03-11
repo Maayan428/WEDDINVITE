@@ -1,5 +1,18 @@
 export const APP_NAME = 'ניהול אורחי חתונה';
 
+export const GROUP_COLORS = [
+  '#0d9488', // teal
+  '#3b82f6', // blue
+  '#8b5cf6', // violet
+  '#f59e0b', // amber
+  '#f43f5e', // rose
+  '#10b981', // emerald
+  '#f97316', // orange
+  '#06b6d4', // cyan
+];
+
+export const DEFAULT_GROUP_COLOR = '#9ca3af';
+
 export const DEFAULT_GROUP = 'לא שויך לקבוצה';
 
 export const GUESTS_COLLECTION = 'guests';

@@ -39,12 +39,12 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
   return (
     <div className="min-h-screen bg-gradient-to-br from-[#f0fafa] to-white">
       {/* Top Navbar */}
-      <header className="sticky top-0 z-50 border-b border-gray-100 bg-white shadow-sm">
+      <header className="sticky top-0 z-50 border-b border-gray-100 bg-white/90 backdrop-blur-md shadow-sm">
         <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-4 sm:px-6">
           {/* Brand */}
           <div className="flex items-center gap-2">
             <span className="font-serif text-xl font-bold" style={{ color: '#1e3a5f' }}>
-              ניהול אורחים 💍
+              ניהול אורחים
             </span>
           </div>
 
