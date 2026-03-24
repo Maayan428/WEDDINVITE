@@ -1,36 +1,73 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# 💍 WeddInvite — Wedding RSVP Management System
+
+## Description
+A responsive web application for managing wedding RSVPs.
+Allows the event manager to manage guests, send personal invitations, and track attendance statuses in real time.
+
+## Features
+- Guest list management (add, edit, delete)
+- Import and export guests from Excel
+- Personal invitation link for each guest
+- Beautifully designed RSVP page for guests — confirm/decline, number of attendees, dietary needs, and personal blessing
+- Live dashboard with statistics and group breakdown chart
+- Dynamic group management
+- Fully responsive design — optimized for mobile and desktop
+
+## Tech Stack
+- Next.js 14 (App Router)
+- TypeScript
+- Tailwind CSS
+- Firebase (Firestore + Authentication)
+- Recharts
+- SheetJS (xlsx)
+- MVVM Architecture
 
 ## Getting Started
 
-First, run the development server:
-
+### Step 1 — Clone the repository
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+git clone https://github.com/Maayan428/weddinvite.git
+cd weddinvite
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+### Step 2 — Install dependencies
+```bash
+npm install
+```
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+### Step 3 — Configure Firebase
+Create a `.env.local` file in the project root with your Firebase credentials:
+```
+NEXT_PUBLIC_FIREBASE_API_KEY=
+NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN=
+NEXT_PUBLIC_FIREBASE_PROJECT_ID=
+NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET=
+NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID=
+NEXT_PUBLIC_FIREBASE_APP_ID=
+```
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+### Step 4 — Run locally
+```bash
+npm run dev
+```
+Open in browser: **http://localhost:3000**
 
-## Learn More
+## Project Structure
+```
+src/
+├── app/              # Next.js App Router pages
+│   ├── admin/        # Protected admin pages (dashboard, guests)
+│   ├── invite/       # Public guest invitation page
+│   └── login/        # Admin login page
+├── components/       # UI components
+│   ├── admin/        # Admin-specific components
+│   ├── invite/       # Guest invitation components
+│   └── ui/           # Shared UI primitives
+├── viewmodels/       # MVVM ViewModels (business logic hooks)
+├── services/         # Firebase & data services
+├── models/           # TypeScript interfaces & types
+└── lib/              # Constants, utils, helpers
+```
 
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+---
+Made with 💙 for Gil & Maayan
