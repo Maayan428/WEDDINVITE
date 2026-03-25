@@ -17,8 +17,13 @@ const heebo = Heebo({
 });
 
 export const metadata: Metadata = {
-  title: 'הזמנה לחתונה',
-  description: 'מערכת ניהול אורחים לחתונה',
+  title: 'ניהול אורחים | מערכת הזמנות לחתונה',
+  description: 'מערכת לניהול הזמנות ואישורי הגעה לחתונה',
+  openGraph: {
+    siteName: 'WeddInvite',
+    locale: 'he_IL',
+    type: 'website',
+  },
 };
 
 export default function RootLayout({
