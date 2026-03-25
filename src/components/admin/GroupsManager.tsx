@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import { Trash2, ChevronUp, ChevronDown, Plus, X } from 'lucide-react';
 import { useGroupsViewModel } from '@/viewmodels/useGroupsViewModel';
+import { GROUP_COLORS, DEFAULT_GROUP } from '@/lib/constants';
 import Button from '@/components/ui/Button';
 
 interface GroupsManagerProps {
@@ -24,11 +25,13 @@ export default function GroupsManager({ onClose, guestCounts }: GroupsManagerPro
     cancelRemove,
     moveUp,
     moveDown,
+    changeColor,
     save,
   } = useGroupsViewModel();
 
   const [newGroupName, setNewGroupName] = useState('');
   const [addError, setAddError] = useState<string | null>(null);
+  const [showColorPicker, setShowColorPicker] = useState<string | null>(null);
 
   function handleAdd() {
     const err = addGroup(newGroupName);
@@ -38,6 +41,11 @@ export default function GroupsManager({ onClose, guestCounts }: GroupsManagerPro
     }
     setAddError(null);
     setNewGroupName('');
+  }
+
+  function handleChangeGroupColor(name: string, color: string) {
+    changeColor(name, color);
+    setShowColorPicker(null);
   }
 
   return (
@@ -59,7 +67,7 @@ export default function GroupsManager({ onClose, guestCounts }: GroupsManagerPro
         <div className="p-6 flex flex-col gap-4">
           {loading ? (
             <div className="flex items-center justify-center py-8">
-              <div className="w-6 h-6 rounded-full border-2 border-navy-800 border-t-transparent animate-spin" />
+              <div className="w-6 h-6 rounded-full border-2 border-teal-500 border-t-transparent animate-spin" />
             </div>
           ) : (
             <>
@@ -73,7 +81,6 @@ export default function GroupsManager({ onClose, guestCounts }: GroupsManagerPro
                 </div>
               )}
 
-              {/* Pending remove confirmation */}
               {pendingRemove && (
                 <div className="rounded-lg border border-orange-200 bg-orange-50 px-4 py-3">
                   <p className="text-sm font-medium text-orange-800 mb-3">
@@ -91,40 +98,90 @@ export default function GroupsManager({ onClose, guestCounts }: GroupsManagerPro
                 {groups.length === 0 && (
                   <li className="px-4 py-6 text-center text-sm text-gray-400">אין קבוצות עדיין</li>
                 )}
-                {groups.map((group, i) => (
-                  <li key={group} className="flex items-center gap-2 px-4 py-3 bg-white hover:bg-gray-50">
-                    <div className="flex flex-col gap-0.5">
-                      <button
-                        type="button"
-                        onClick={() => moveUp(i)}
-                        disabled={i === 0}
-                        className="p-0.5 rounded text-gray-400 hover:text-gray-700 disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
-                      >
-                        <ChevronUp className="w-4 h-4" />
-                      </button>
-                      <button
-                        type="button"
-                        onClick={() => moveDown(i)}
-                        disabled={i === groups.length - 1}
-                        className="p-0.5 rounded text-gray-400 hover:text-gray-700 disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
-                      >
-                        <ChevronDown className="w-4 h-4" />
-                      </button>
-                    </div>
-                    <span className="flex-1 text-sm font-medium text-gray-800">{group}</span>
-                    {(guestCounts[group] ?? 0) > 0 && (
-                      <span className="text-xs text-gray-400">{guestCounts[group]} אורחים</span>
-                    )}
-                    <button
-                      type="button"
-                      onClick={() => removeGroup(group, guestCounts[group] ?? 0)}
-                      className="p-1.5 rounded text-gray-400 hover:text-red-500 hover:bg-red-50 transition-colors"
-                      title="מחק קבוצה"
-                    >
-                      <Trash2 className="w-4 h-4" />
-                    </button>
-                  </li>
-                ))}
+                {groups.map((group, i) => {
+                  const isDefault = group.name === DEFAULT_GROUP;
+                  return (
+                    <li key={group.name} className="bg-white hover:bg-gray-50">
+                      <div className="flex items-center gap-2 px-4 py-3">
+                        <div className="flex flex-col gap-0.5">
+                          <button
+                            type="button"
+                            onClick={() => moveUp(i)}
+                            disabled={i === 0}
+                            className="p-0.5 rounded text-gray-400 hover:text-gray-700 disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
+                          >
+                            <ChevronUp className="w-4 h-4" />
+                          </button>
+                          <button
+                            type="button"
+                            onClick={() => moveDown(i)}
+                            disabled={i === groups.length - 1}
+                            className="p-0.5 rounded text-gray-400 hover:text-gray-700 disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
+                          >
+                            <ChevronDown className="w-4 h-4" />
+                          </button>
+                        </div>
+
+                        {/* Color swatch — static for DEFAULT_GROUP, clickable for others */}
+                        {isDefault ? (
+                          <div
+                            className="h-4 w-4 flex-shrink-0 rounded-full border border-white shadow-sm"
+                            style={{ backgroundColor: group.color }}
+                          />
+                        ) : (
+                          <button
+                            type="button"
+                            title="שנה צבע"
+                            onClick={() =>
+                              setShowColorPicker(
+                                showColorPicker === group.name ? null : group.name,
+                              )
+                            }
+                            className="h-4 w-4 flex-shrink-0 rounded-full border-2 border-white shadow-sm transition-transform hover:scale-125"
+                            style={{ backgroundColor: group.color }}
+                          />
+                        )}
+
+                        <span className="flex-1 text-sm font-medium text-gray-800">
+                          {group.name}
+                        </span>
+
+                        {(guestCounts[group.name] ?? 0) > 0 && (
+                          <span className="text-xs text-gray-400">
+                            {guestCounts[group.name]} אורחים
+                          </span>
+                        )}
+
+                        <button
+                          type="button"
+                          onClick={() => removeGroup(group.name, guestCounts[group.name] ?? 0)}
+                          className="p-1.5 rounded text-gray-400 hover:text-red-500 hover:bg-red-50 transition-colors"
+                          title="מחק קבוצה"
+                        >
+                          <Trash2 className="w-4 h-4" />
+                        </button>
+                      </div>
+
+                      {/* Mini color picker */}
+                      {showColorPicker === group.name && (
+                        <div className="flex gap-1.5 px-4 pb-3">
+                          {GROUP_COLORS.map((color) => (
+                            <button
+                              key={color}
+                              type="button"
+                              onClick={() => handleChangeGroupColor(group.name, color)}
+                              className="h-5 w-5 rounded-full border-2 transition-transform hover:scale-110"
+                              style={{
+                                backgroundColor: color,
+                                borderColor: group.color === color ? '#1e3a5f' : 'transparent',
+                              }}
+                            />
+                          ))}
+                        </div>
+                      )}
+                    </li>
+                  );
+                })}
               </ul>
 
               {/* Add new group */}
@@ -139,7 +196,7 @@ export default function GroupsManager({ onClose, guestCounts }: GroupsManagerPro
                     }}
                     onKeyDown={(e) => e.key === 'Enter' && handleAdd()}
                     placeholder="שם קבוצה חדשה..."
-                    className="flex-1 rounded-lg border border-gray-300 px-3 py-2 text-sm outline-none focus:border-navy-800 focus:ring-1 focus:ring-navy-800"
+                    className="flex-1 rounded-lg border border-gray-300 px-3 py-2 text-sm outline-none focus:border-teal-400 focus:ring-1 focus:ring-teal-100"
                   />
                   <Button onClick={handleAdd} variant="secondary">
                     <Plus className="w-4 h-4" />
@@ -151,8 +208,7 @@ export default function GroupsManager({ onClose, guestCounts }: GroupsManagerPro
             </>
           )}
 
-          {/* Footer */}
-          <div className="flex justify-end gap-3 pt-2 border-t border-gray-200">
+          <div className="flex justify-end gap-3 border-t border-gray-200 pt-2">
             <Button variant="secondary" onClick={onClose}>סגור</Button>
             <Button onClick={save} loading={saving} disabled={loading}>
               שמור שינויים

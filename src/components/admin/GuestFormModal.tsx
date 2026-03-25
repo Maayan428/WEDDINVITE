@@ -2,8 +2,8 @@
 
 import { useState, useEffect } from 'react';
 import { Guest, GuestFormData } from '@/models/guest.model';
-import { getGroups } from '@/services/groups.service';
 import { DEFAULT_GROUP } from '@/lib/constants';
+import { useGroups } from '@/lib/GroupsContext';
 import Modal from '@/components/ui/Modal';
 import Input from '@/components/ui/Input';
 import Button from '@/components/ui/Button';
@@ -22,30 +22,29 @@ interface FormErrors {
   group?: string;
 }
 
-const defaultFields = {
+type GenderType = 'male' | 'female' | 'unspecified';
+
+const defaultFields: {
+  firstName: string;
+  lastName: string;
+  phone: string;
+  group: string;
+  plannedGuests: number;
+  gender: GenderType;
+} = {
   firstName: '',
   lastName: '',
   phone: '',
   group: DEFAULT_GROUP,
   plannedGuests: 1,
+  gender: 'unspecified',
 };
 
 export default function GuestFormModal({ isOpen, onClose, guest, onSubmit }: GuestFormModalProps) {
   const [fields, setFields] = useState(defaultFields);
   const [errors, setErrors] = useState<FormErrors>({});
   const [loading, setLoading] = useState(false);
-  const [groups, setGroups] = useState<string[]>([]);
-  const [groupsLoading, setGroupsLoading] = useState(false);
-
-  // Load groups from Firestore whenever the modal opens
-  useEffect(() => {
-    if (!isOpen) return;
-    setGroupsLoading(true);
-    getGroups()
-      .then(setGroups)
-      .catch(() => setGroups([DEFAULT_GROUP]))
-      .finally(() => setGroupsLoading(false));
-  }, [isOpen]);
+  const { groups: groupEntries } = useGroups();
 
   // Populate fields when editing an existing guest
   useEffect(() => {
@@ -57,6 +56,7 @@ export default function GuestFormModal({ isOpen, onClose, guest, onSubmit }: Gue
         phone: guest.phone,
         group: guest.group,
         plannedGuests: guest.plannedGuests,
+        gender: guest.gender ?? 'unspecified',
       });
     } else {
       setFields(defaultFields);
@@ -85,6 +85,7 @@ export default function GuestFormModal({ isOpen, onClose, guest, onSubmit }: Gue
         phone: fields.phone.trim(),
         group: fields.group,
         plannedGuests: fields.plannedGuests,
+        gender: fields.gender,
         dietaryNeeds: [],
       });
       onClose();
@@ -95,11 +96,12 @@ export default function GuestFormModal({ isOpen, onClose, guest, onSubmit }: Gue
     }
   }
 
-  // If the existing guest's group is not in the loaded list, add it as an option
+  // Names from context; if guest's group isn't in the list, add it as a fallback option
+  const groupNames = groupEntries.map((g) => g.name);
   const groupOptions =
-    fields.group && !groups.includes(fields.group)
-      ? [...groups, fields.group]
-      : groups;
+    fields.group && !groupNames.includes(fields.group)
+      ? [...groupNames, fields.group]
+      : groupNames;
 
   return (
     <Modal isOpen={isOpen} onClose={onClose} title={guest ? 'עריכת אורח' : 'הוספת אורח'}>
@@ -120,6 +122,31 @@ export default function GuestFormModal({ isOpen, onClose, guest, onSubmit }: Gue
             error={errors.lastName}
             placeholder="ישראלי"
           />
+        </div>
+
+        {/* Gender (פנייה) */}
+        <div className="flex flex-col gap-1">
+          <label className="text-sm font-medium text-gray-700">פנייה</label>
+          <div className="flex gap-2">
+            {([
+              { value: 'male', label: 'זכר' },
+              { value: 'female', label: 'נקבה' },
+              { value: 'unspecified', label: 'לא מצוין' },
+            ] as { value: GenderType; label: string }[]).map(({ value, label }) => (
+              <button
+                key={value}
+                type="button"
+                onClick={() => setFields(p => ({ ...p, gender: value }))}
+                className={`flex-1 rounded-full border py-1.5 text-sm font-medium transition-all ${
+                  fields.gender === value
+                    ? 'border-teal-500 bg-teal-500 text-white'
+                    : 'border-gray-200 bg-white text-gray-600 hover:border-teal-300'
+                }`}
+              >
+                {label}
+              </button>
+            ))}
+          </div>
         </div>
 
         {/* Phone */}
@@ -152,22 +179,15 @@ export default function GuestFormModal({ isOpen, onClose, guest, onSubmit }: Gue
         {/* Group dropdown — dynamic from Firestore */}
         <div className="flex flex-col gap-1">
           <label className="text-sm font-medium text-gray-700">קבוצה</label>
-          {groupsLoading ? (
-            <div className="flex items-center gap-2 py-2">
-              <div className="w-4 h-4 rounded-full border-2 border-teal-500 border-t-transparent animate-spin" />
-              <span className="text-sm text-gray-400">טוען קבוצות...</span>
-            </div>
-          ) : (
-            <select
-              value={fields.group}
-              onChange={(e) => setFields((p) => ({ ...p, group: e.target.value }))}
-              className="rounded-xl border border-gray-200 px-3 py-2 text-sm outline-none focus:border-teal-400 focus:ring-2 focus:ring-teal-100 transition-all duration-200"
-            >
-              {groupOptions.map((g) => (
-                <option key={g} value={g}>{g}</option>
-              ))}
-            </select>
-          )}
+          <select
+            value={fields.group}
+            onChange={(e) => setFields((p) => ({ ...p, group: e.target.value }))}
+            className="rounded-xl border border-gray-200 px-3 py-2 text-sm outline-none focus:border-teal-400 focus:ring-2 focus:ring-teal-100 transition-all duration-200"
+          >
+            {groupOptions.map((g) => (
+              <option key={g} value={g}>{g}</option>
+            ))}
+          </select>
           {errors.group && <p className="text-xs text-red-600">{errors.group}</p>}
         </div>
 

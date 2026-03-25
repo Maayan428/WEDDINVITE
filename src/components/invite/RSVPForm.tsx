@@ -118,12 +118,11 @@ export default function RSVPForm({ guest, onSubmit, loading, initialAttending }:
               <span className="text-2xl font-semibold w-8 text-center" style={{ color: '#1e3a5f' }}>{actualGuests}</span>
               <button
                 type="button"
-                onClick={() => setActualGuests((n) => Math.min(guest.plannedGuests, n + 1))}
+                onClick={() => setActualGuests((n) => n + 1)}
                 className="w-10 h-10 rounded-full border border-gray-200 text-xl leading-none hover:bg-teal-50 hover:border-teal-300 hover:text-teal-600 transition-all duration-200"
               >
                 +
               </button>
-              <span className="text-xs text-gray-400">מתוך {guest.plannedGuests} מוזמנים</span>
             </div>
           </div>
 

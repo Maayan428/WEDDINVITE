@@ -12,6 +12,7 @@ export interface Guest {
   dietaryNeeds: string[];
   dietaryNote?: string;
   personalMessage?: string;
+  gender?: 'male' | 'female' | 'unspecified';
   inviteToken: string;
   respondedAt?: Date;
   createdAt: Date;

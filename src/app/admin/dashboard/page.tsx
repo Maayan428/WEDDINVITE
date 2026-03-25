@@ -8,7 +8,7 @@ import GroupsBarChart from '@/components/admin/GroupsBarChart';
 import GroupDetailModal from '@/components/admin/GroupDetailModal';
 import GroupsManager from '@/components/admin/GroupsManager';
 import Button from '@/components/ui/Button';
-import { GROUP_COLORS, DEFAULT_GROUP, DEFAULT_GROUP_COLOR } from '@/lib/constants';
+import { useGroups } from '@/lib/GroupsContext';
 
 function StatsSkeleton() {
   return (
@@ -34,9 +34,10 @@ function SummarySkeleton() {
   );
 }
 
-function GroupCard({ group, onClick, index }: { group: GroupBreakdown; onClick: () => void; index: number }) {
+function GroupCard({ group, onClick }: { group: GroupBreakdown; onClick: () => void }) {
+  const { getColor } = useGroups();
   const pct = group.total > 0 ? Math.round((group.confirmed / group.total) * 100) : 0;
-  const hex = group.name === DEFAULT_GROUP ? DEFAULT_GROUP_COLOR : GROUP_COLORS[index % GROUP_COLORS.length];
+  const hex = getColor(group.name);
   return (
     <button
       type="button"
@@ -194,11 +195,10 @@ export default function DashboardPage() {
         <div className="animate-fade-slide-up delay-300">
           <h2 className="mb-4 text-base font-semibold" style={{ color: '#1e3a5f' }}>ביצועים לפי קבוצה</h2>
           <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
-            {groupBreakdown.map((group, index) => (
+            {groupBreakdown.map((group) => (
               <GroupCard
                 key={group.name}
                 group={group}
-                index={index}
                 onClick={() => setSelectedGroup(group.name)}
               />
             ))}

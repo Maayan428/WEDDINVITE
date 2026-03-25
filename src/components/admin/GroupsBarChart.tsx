@@ -11,7 +11,7 @@ import {
   ResponsiveContainer,
   Customized,
 } from 'recharts';
-import { DEFAULT_GROUP, GROUP_COLORS, DEFAULT_GROUP_COLOR } from '@/lib/constants';
+import { useGroups } from '@/lib/GroupsContext';
 
 interface ChartClickState {
   activeLabel?: string | number;
@@ -42,68 +42,59 @@ interface CustomTooltipProps {
   label?: string;
 }
 
-function getGroupColor(name: string, sortedGroups: string[]): string {
-  if (name === DEFAULT_GROUP) return DEFAULT_GROUP_COLOR;
-  const idx = sortedGroups.indexOf(name);
-  return idx >= 0 ? GROUP_COLORS[idx % GROUP_COLORS.length] : DEFAULT_GROUP_COLOR;
-}
-
-// Draws a single top-rounded outline per group wrapping the full stacked height
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-const GroupOutline = (props: any) => {
-  const { formattedGraphicalItems } = props;
-  if (!formattedGraphicalItems?.length) return null;
-
-  const firstItemData: Array<{ name?: string }> = formattedGraphicalItems[0]?.props?.data ?? [];
-  const allNames = firstItemData.map((d) => d?.name ?? '');
-  const sortedGroups = allNames.filter((n) => n !== DEFAULT_GROUP).sort();
-
-  const groups: Record<string, { x: number; y: number; width: number; totalHeight: number; color: string }> = {};
-
+// Factory: returns a GroupOutline renderer that closes over getColor from context
+const makeGroupOutline =
+  (getColor: (name: string) => string) =>
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  formattedGraphicalItems.forEach((item: any) => {
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    (item.props?.data ?? []).forEach((entry: any) => {
-      const key: string = entry?.name ?? '';
-      if (!key) return;
-      const h: number = entry.height ?? 0;
-      if (!groups[key]) {
-        groups[key] = {
-          x: entry.x ?? 0,
-          y: entry.y ?? 0,
-          width: entry.width ?? 0,
-          totalHeight: 0,
-          color: getGroupColor(key, sortedGroups),
-        };
-      }
-      if (h > 0) {
-        groups[key].totalHeight += h;
-        groups[key].y = Math.min(groups[key].y, entry.y ?? 0);
-      }
-    });
-  });
+  (props: any) => {
+    const { formattedGraphicalItems } = props;
+    if (!formattedGraphicalItems?.length) return null;
 
-  return (
-    <g>
-      {Object.entries(groups).map(([name, g]) => {
-        if (g.totalHeight <= 0) return null;
-        const r = 8;
-        const { x: gx, y: gy, width: gw, totalHeight: gh, color: gc } = g;
-        // Rounded top corners, square bottom
-        const path = `M ${gx} ${gy + gh} L ${gx} ${gy + r} Q ${gx} ${gy} ${gx + r} ${gy} L ${gx + gw - r} ${gy} Q ${gx + gw} ${gy} ${gx + gw} ${gy + r} L ${gx + gw} ${gy + gh} Z`;
-        return (
-          <path
-            key={name}
-            d={path}
-            fill="transparent"
-            stroke={gc}
-            strokeWidth={2.5}
-          />
-        );
-      })}
-    </g>
-  );
-};
+    const groups: Record<string, { x: number; y: number; width: number; totalHeight: number; color: string }> = {};
+
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    formattedGraphicalItems.forEach((item: any) => {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      (item.props?.data ?? []).forEach((entry: any) => {
+        const key: string = entry?.name ?? '';
+        if (!key) return;
+        const h: number = entry.height ?? 0;
+        if (!groups[key]) {
+          groups[key] = {
+            x: entry.x ?? 0,
+            y: entry.y ?? 0,
+            width: entry.width ?? 0,
+            totalHeight: 0,
+            color: getColor(key),
+          };
+        }
+        if (h > 0) {
+          groups[key].totalHeight += h;
+          groups[key].y = Math.min(groups[key].y, entry.y ?? 0);
+        }
+      });
+    });
+
+    return (
+      <g>
+        {Object.entries(groups).map(([name, g]) => {
+          if (g.totalHeight <= 0) return null;
+          const r = 8;
+          const { x: gx, y: gy, width: gw, totalHeight: gh, color: gc } = g;
+          const path = `M ${gx} ${gy + gh} L ${gx} ${gy + r} Q ${gx} ${gy} ${gx + r} ${gy} L ${gx + gw - r} ${gy} Q ${gx + gw} ${gy} ${gx + gw} ${gy + r} L ${gx + gw} ${gy + gh} Z`;
+          return (
+            <path
+              key={name}
+              d={path}
+              fill="transparent"
+              stroke={gc}
+              strokeWidth={2.5}
+            />
+          );
+        })}
+      </g>
+    );
+  };
 
 const CustomLegend = () => (
   <div style={{ display: 'flex', justifyContent: 'center', gap: '24px', marginTop: '16px' }}>
@@ -147,6 +138,8 @@ function CustomTooltip({ active, payload, label }: CustomTooltipProps) {
 }
 
 export default function GroupsBarChart({ groups, onGroupClick }: GroupsBarChartProps) {
+  const { getColor } = useGroups();
+
   if (groups.length === 0) {
     return (
       <div className="flex items-center justify-center py-12 text-sm text-gray-400">
@@ -155,7 +148,7 @@ export default function GroupsBarChart({ groups, onGroupClick }: GroupsBarChartP
     );
   }
 
-  const sortedGroups = groups.map((g) => g.name).filter((n) => n !== DEFAULT_GROUP).sort();
+  const GroupOutline = makeGroupOutline(getColor);
 
   function handleChartClick(state: ChartClickState) {
     if (state?.activeLabel != null) onGroupClick(String(state.activeLabel));
@@ -164,7 +157,7 @@ export default function GroupsBarChart({ groups, onGroupClick }: GroupsBarChartP
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const coloredTick = (tickProps: any) => {
     const { x, y, payload } = tickProps;
-    const color = getGroupColor(payload.value, sortedGroups);
+    const color = getColor(payload.value);
     return (
       <foreignObject x={x - 50} y={y + 4} width={100} height={30}>
         {/* @ts-expect-error: xmlns required for foreignObject HTML content */}

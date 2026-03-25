@@ -1,7 +1,12 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { getGroups, saveGroups as serviceSaveGroups } from '@/services/groups.service';
+import {
+  GroupEntry,
+  getGroups,
+  saveGroups as serviceSaveGroups,
+  nextAvailableColor,
+} from '@/services/groups.service';
 
 interface PendingRemove {
   group: string;
@@ -9,7 +14,7 @@ interface PendingRemove {
 }
 
 interface GroupsViewModel {
-  groups: string[];
+  groups: GroupEntry[];
   loading: boolean;
   saving: boolean;
   error: string | null;
@@ -21,11 +26,12 @@ interface GroupsViewModel {
   cancelRemove: () => void;
   moveUp: (index: number) => void;
   moveDown: (index: number) => void;
+  changeColor: (name: string, color: string) => void;
   save: () => Promise<void>;
 }
 
 export function useGroupsViewModel(): GroupsViewModel {
-  const [groups, setGroups] = useState<string[]>([]);
+  const [groups, setGroups] = useState<GroupEntry[]>([]);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -42,8 +48,9 @@ export function useGroupsViewModel(): GroupsViewModel {
   function addGroup(name: string): string | null {
     const trimmed = name.trim();
     if (!trimmed) return 'שם הקבוצה לא יכול להיות ריק';
-    if (groups.includes(trimmed)) return 'קבוצה בשם זה כבר קיימת';
-    setGroups((prev) => [...prev, trimmed]);
+    if (groups.some((g) => g.name === trimmed)) return 'קבוצה בשם זה כבר קיימת';
+    const color = nextAvailableColor(groups.map((g) => g.color));
+    setGroups((prev) => [...prev, { name: trimmed, color }]);
     return null;
   }
 
@@ -51,13 +58,13 @@ export function useGroupsViewModel(): GroupsViewModel {
     if (guestCount > 0) {
       setPendingRemove({ group: name, count: guestCount });
     } else {
-      setGroups((prev) => prev.filter((g) => g !== name));
+      setGroups((prev) => prev.filter((g) => g.name !== name));
     }
   }
 
   function confirmRemove(): void {
     if (!pendingRemove) return;
-    setGroups((prev) => prev.filter((g) => g !== pendingRemove.group));
+    setGroups((prev) => prev.filter((g) => g.name !== pendingRemove.group));
     setPendingRemove(null);
   }
 
@@ -81,6 +88,10 @@ export function useGroupsViewModel(): GroupsViewModel {
       [next[index], next[index + 1]] = [next[index + 1], next[index]];
       return next;
     });
+  }
+
+  function changeColor(name: string, color: string): void {
+    setGroups((prev) => prev.map((g) => (g.name === name ? { ...g, color } : g)));
   }
 
   async function save(): Promise<void> {
@@ -110,6 +121,7 @@ export function useGroupsViewModel(): GroupsViewModel {
     cancelRemove,
     moveUp,
     moveDown,
+    changeColor,
     save,
   };
 }

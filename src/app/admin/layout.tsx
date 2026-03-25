@@ -3,13 +3,15 @@
 import { useEffect } from 'react';
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
-import { LayoutDashboard, Users, LogOut } from 'lucide-react';
+import { LayoutDashboard, Users, Settings, LogOut } from 'lucide-react';
 import { useAuthViewModel } from '@/viewmodels/useAuthViewModel';
+import { GroupsProvider } from '@/lib/GroupsContext';
 import { cn } from '@/lib/utils';
 
 const navLinks = [
   { href: '/admin/dashboard', label: 'לוח בקרה', icon: LayoutDashboard },
   { href: '/admin/guests',    label: 'אורחים',   icon: Users },
+  { href: '/admin/settings',  label: 'הגדרות',   icon: Settings },
 ];
 
 export default function AdminLayout({ children }: { children: React.ReactNode }) {
@@ -87,7 +89,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
 
       {/* Page content */}
       <main className="mx-auto max-w-7xl px-4 py-8 sm:px-6">
-        {children}
+        <GroupsProvider>{children}</GroupsProvider>
       </main>
     </div>
   );

@@ -39,7 +39,7 @@ export interface ImportResult {
 
 export async function importGuestsFromExcel(file: File): Promise<ImportResult> {
   // Fetch valid groups first so we can validate each row
-  const validGroups = await getGroups();
+  const validGroupNames = (await getGroups()).map((g) => g.name);
 
   return new Promise((resolve, reject) => {
     const reader = new FileReader();
@@ -97,7 +97,7 @@ export async function importGuestsFromExcel(file: File): Promise<ImportResult> {
           let group = mapped.group?.trim() ?? '';
           if (!group) {
             group = DEFAULT_GROUP;
-          } else if (!validGroups.includes(group)) {
+          } else if (!validGroupNames.includes(group)) {
             warnings.push(
               `שורה ${rowNumber}: קבוצה "${group}" לא נמצאה במערכת — שויך ל"${DEFAULT_GROUP}"`
             );
@@ -180,8 +180,9 @@ export function exportGuestsToExcel(guests: Guest[]): void {
 }
 
 export async function downloadExcelTemplate(): Promise<void> {
-  const groups = await getGroups();
-  const groupsList = groups.join(', ');
+  const groupEntries = await getGroups();
+  const groupNames = groupEntries.map((g) => g.name);
+  const groupsList = groupNames.join(', ');
 
   // ── Main sheet ─────────────────────────────────────────────────────────────
   const exampleRow: Record<string, string | number> = {
@@ -189,7 +190,7 @@ export async function downloadExcelTemplate(): Promise<void> {
     'שם משפחה': 'ישראלי',
     'טלפון': '050-0000000',
     'מספר מוזמנים': 2,
-    'קבוצה': groups[0] ?? DEFAULT_GROUP,
+    'קבוצה': groupNames[0] ?? DEFAULT_GROUP,
   };
 
   const mainSheet = XLSX.utils.json_to_sheet([exampleRow], { header: TEMPLATE_HEADERS });
@@ -202,7 +203,7 @@ export async function downloadExcelTemplate(): Promise<void> {
     {
       type: 'list',
       sqref: 'E2:E200',
-      formula1: `"${groups.join(',')}"`,
+      formula1: `"${groupNames.join(',')}"`,
       showDropDown: false,
       showErrorMessage: true,
       errorTitle: 'קבוצה לא תקינה',
@@ -211,7 +212,7 @@ export async function downloadExcelTemplate(): Promise<void> {
   ];
 
   // ── Groups reference sheet (one group per row) ──────────────────────────
-  const groupRows = groups.map((g) => ({ 'קבוצות תקינות': g }));
+  const groupRows = groupNames.map((g) => ({ 'קבוצות תקינות': g }));
   const groupSheet = XLSX.utils.json_to_sheet(groupRows);
   groupSheet['!cols'] = [{ wch: 22 }];
 

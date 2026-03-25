@@ -5,7 +5,8 @@ import { Link2, Check, Pencil, Trash2 } from 'lucide-react';
 import { Guest } from '@/models/guest.model';
 import Badge from '@/components/ui/Badge';
 import { formatPhone } from '@/lib/utils';
-import { DEFAULT_GROUP, GROUP_COLORS, DEFAULT_GROUP_COLOR } from '@/lib/constants';
+import { DEFAULT_GROUP } from '@/lib/constants';
+import { useGroups } from '@/lib/GroupsContext';
 
 interface GuestTableProps {
   guests: Guest[];
@@ -17,12 +18,7 @@ interface GuestTableProps {
 
 export default function GuestTable({ guests, copiedGuestId, onEdit, onDelete, onCopyLink }: GuestTableProps) {
   const [confirmDeleteId, setConfirmDeleteId] = useState<string | null>(null);
-
-  // Build a stable group → hex color mapping (sorted alphabetically for consistency)
-  const uniqueGroups = [...new Set(guests.map((g) => g.group).filter((g) => g !== DEFAULT_GROUP))].sort();
-  const groupColorMap: Record<string, string> = {};
-  uniqueGroups.forEach((g, i) => { groupColorMap[g] = GROUP_COLORS[i % GROUP_COLORS.length]; });
-  // DEFAULT_GROUP gets no full-cell color — rendered as inline chip instead
+  const { getColor } = useGroups();
 
   if (guests.length === 0) {
     return (
@@ -51,7 +47,7 @@ export default function GuestTable({ guests, copiedGuestId, onEdit, onDelete, on
               <th className="px-4 py-3 text-start font-semibold text-[#1e3a5f]">שם</th>
               <th className="w-[140px] min-w-[140px] px-4 py-3 text-center font-semibold text-[#1e3a5f]">קבוצה</th>
               <th className="px-4 py-3 text-start font-semibold text-[#1e3a5f]">טלפון</th>
-              <th className="px-4 py-3 text-start font-semibold text-[#1e3a5f]">מוזמנים</th>
+              <th className="px-4 py-3 text-start font-semibold text-[#1e3a5f]">מגיעים / מתוכנן</th>
               <th className="px-4 py-3 text-start font-semibold text-[#1e3a5f]">סטטוס</th>
               <th className="px-4 py-3 text-start font-semibold text-[#1e3a5f]">קישור</th>
               <th className="px-4 py-3 text-start font-semibold text-[#1e3a5f]">פעולות</th>
@@ -77,16 +73,30 @@ export default function GuestTable({ guests, copiedGuestId, onEdit, onDelete, on
                     <td
                       className="w-[140px] min-w-[140px] px-3 py-3 text-center text-sm font-medium"
                       style={{
-                        backgroundColor: `${groupColorMap[guest.group] ?? DEFAULT_GROUP_COLOR}1a`,
-                        color: groupColorMap[guest.group] ?? DEFAULT_GROUP_COLOR,
+                        backgroundColor: `${getColor(guest.group)}1a`,
+                        color: getColor(guest.group),
                       }}
                     >
                       {guest.group}
                     </td>
                   )}
                   <td className="px-4 py-3 text-gray-600">{formatPhone(guest.phone)}</td>
-                  <td className="px-4 py-3 text-gray-600">
-                    {guest.actualGuests ?? guest.plannedGuests}
+                  <td className="px-4 py-3">
+                    {guest.status === 'confirmed' ? (
+                      <div>
+                        <span className="font-medium text-gray-800">
+                          {guest.actualGuests ?? guest.plannedGuests}
+                        </span>
+                        {guest.actualGuests !== undefined &&
+                          guest.actualGuests !== guest.plannedGuests && (
+                            <div className="text-xs text-gray-400">
+                              (תוכנן: {guest.plannedGuests})
+                            </div>
+                          )}
+                      </div>
+                    ) : (
+                      <span className="text-gray-600">{guest.plannedGuests}</span>
+                    )}
                   </td>
                   <td className="px-4 py-3">
                     <Badge status={guest.status} />
@@ -185,7 +195,11 @@ export default function GuestTable({ guests, copiedGuestId, onEdit, onDelete, on
 
               <div className="mt-3 flex items-center gap-4 text-sm text-gray-600">
                 {guest.phone && <span>{formatPhone(guest.phone)}</span>}
-                <span>{guest.actualGuests ?? guest.plannedGuests} מוזמנים</span>
+                <span>
+                  {guest.status === 'confirmed'
+                    ? `${guest.actualGuests ?? guest.plannedGuests} מגיעים`
+                    : `${guest.plannedGuests} מתוכנן`}
+                </span>
               </div>
 
               <div className="mt-3 flex items-center justify-between border-t border-gray-100 pt-3">

@@ -1,8 +1,10 @@
 'use client';
 
-import { use, useState } from 'react';
+import { use, useEffect, useState } from 'react';
 import { useRSVPViewModel } from '@/viewmodels/useRSVPViewModel';
 import { DEFAULT_EVENT_DETAILS } from '@/lib/constants';
+import { EventDetails } from '@/models/event.model';
+import { getEventDetails } from '@/services/event.service';
 import InvitationCard from '@/components/invite/InvitationCard';
 import RSVPForm from '@/components/invite/RSVPForm';
 import Button from '@/components/ui/Button';
@@ -29,7 +31,10 @@ export default function InvitePage({ params }: InvitePageProps) {
   // forceForm=true when user clicks "לעדכן תגובה"
   const [forceForm, setForceForm] = useState(false);
 
-  const event = DEFAULT_EVENT_DETAILS;
+  const [eventDetails, setEventDetails] = useState<EventDetails>(DEFAULT_EVENT_DETAILS);
+  useEffect(() => {
+    getEventDetails().then(setEventDetails).catch(() => {});
+  }, []);
 
   // ── Loading (initial, no guest yet) ──
   if (loading && !guest) {
@@ -98,7 +103,7 @@ export default function InvitePage({ params }: InvitePageProps) {
 
       <div className="mx-auto max-w-[600px] px-4 py-12 sm:py-16">
         {/* Invitation header */}
-        <InvitationCard guest={guest} event={event} />
+        <InvitationCard guest={guest} event={eventDetails} />
 
         <SectionDivider label="אישור הגעה" />
 

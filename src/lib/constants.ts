@@ -1,3 +1,6 @@
+import { EventDetails } from '@/models/event.model';
+import type { GroupEntry } from '@/services/groups.service';
+
 export const APP_NAME = 'ניהול אורחי חתונה';
 
 export const GROUP_COLORS = [
@@ -42,9 +45,19 @@ export const EXCEL_COLUMN_MAP: Record<string, keyof import('@/models/guest.model
   'מוזמנים מתוכננים': 'plannedGuests',
 };
 
-export const DEFAULT_EVENT_DETAILS = {
-  coupleName: 'רחל ודוד',
-  date: '2025-08-15',
+export function getGroupColor(groupName: string, groups: GroupEntry[]): string {
+  if (groupName === DEFAULT_GROUP) return DEFAULT_GROUP_COLOR;
+  const found = groups.find((g) => g.name === groupName);
+  return found?.color ?? DEFAULT_GROUP_COLOR;
+}
+
+export const DEFAULT_EVENT_DETAILS: EventDetails = {
+  coupleName: 'שם החתן ושם הכלה',
+  brideFirstName: 'הכלה',
+  groomFirstName: 'החתן',
+  date: 'תאריך האירוע',
   time: '19:00',
-  venue: 'אולם האירועים, תל אביב',
+  venue: 'מקום האירוע',
+  rsvpDeadline: 'תאריך אחרון לאישור',
+  welcomeMessage: '',
 };
